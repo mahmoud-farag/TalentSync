@@ -1,159 +1,181 @@
-# Turborepo starter
+# 🌍 TalentSync
 
-This Turborepo starter is maintained by the Turborepo core team.
+**TalentSync** is a job marketplace that connects candidates with job opportunities based on their skills, preferences, and relocation goals.
 
-## Using this example
+It helps candidates discover the right jobs in target countries (e.g. Gulf, Europe) and enables recruiters to find qualified talent worldwide using a smart matching system.
 
-Run the following command:
+---
 
-```sh
-npx create-turbo@latest
+## 🚀 Features
+
+### 👤 Candidate
+
+- Create profile with skills and experience
+- Select preferred countries to work in
+- Upload CV for automatic skill extraction
+- Get personalized job recommendations
+- Track job applications
+
+### 🏢 Recruiter
+
+- Create company profile
+- Post job opportunities (with visa & remote options)
+- Discover matching candidates
+- Manage applications
+
+---
+
+## 🧠 Smart Matching
+
+TalentSync uses a scoring system to match candidates with jobs based on:
+
+- Skills
+- Experience
+- Preferred destinations
+- Visa sponsorship
+- Remote compatibility
+
+Matches are computed asynchronously for better performance and scalability.
+
+---
+
+## ⚙️ Tech Stack
+
+- **Backend:** NestJS + GraphQL
+- **Frontend:** React
+- **Database:** PostgreSQL (Prisma)
+- **Queue:** RabbitMQ
+- **Cache:** Redis
+- **Search:** Elasticsearch
+
+---
+
+## 🏗️ Architecture Overview
+
+```text
+Client (React)
+      ↓
+GraphQL API (NestJS)
+      ↓
+-----------------------------------
+Postgres  |  Redis  |  Elasticsearch
+-----------------------------------
+      ↓
+RabbitMQ (Async Events)
+      ↓
+Workers (Matching, CV Processing, Notifications)
 ```
 
-## What's inside?
+---
 
-This Turborepo includes the following packages/apps:
+## 🔄 Core Flow
 
-### Apps and Packages
+```text
+Candidate uploads CV
+→ Skills extracted
+→ Matching engine runs
+→ Jobs ranked and stored
+→ Recommendations shown
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+Recruiter posts job
+→ Matching candidates found
+→ Notifications triggered
 ```
 
-Without global `turbo`, use your package manager:
+---
+
+## 🎯 Goal
+
+To simplify hiring by connecting the right talent with the right opportunities across borders.
+
+---
+
+## 📌 Status
+
+🚧 In development — building core features and architecture.
+
+---
+
+## 🧱 Monorepo Setup
+
+TalentSync currently uses a Turborepo workspace with separate applications for the frontend and backend:
+
+- `apps/frontend`: React + TypeScript application powered by Vite
+- `apps/backend`: NestJS API service
+- `packages/eslint-config`: shared linting rules
+- `packages/typescript-config`: shared TypeScript configuration
+
+This matches the target deployment model:
+
+- one server for the frontend application
+- one server for the backend API
+- Redis and RabbitMQ running alongside the backend server
+
+---
+
+## 🔌 Local Infrastructure
+
+`docker-compose.yml` provisions the local backend-side dependencies:
+
+- Redis on `localhost:6379`
+- RabbitMQ on `localhost:5672`
+- RabbitMQ management UI on `localhost:15672`
+
+Start them with:
 
 ```sh
-cd my-turborepo
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+docker compose up -d redis rabbitmq
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+---
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## ▶️ Local Development
+
+Install dependencies:
 
 ```sh
-turbo build --filter=docs
+pnpm install
 ```
 
-Without global `turbo`:
+Run both applications:
 
 ```sh
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+pnpm dev
 ```
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+Run one application only:
 
 ```sh
-cd my-turborepo
-turbo dev
+pnpm dev:frontend
+pnpm dev:backend
 ```
 
-Without global `turbo`, use your package manager:
+---
+
+## 🌐 Runtime Configuration
+
+Backend example env file:
 
 ```sh
-cd my-turborepo
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+cp apps/backend/.env.example apps/backend/.env
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+Frontend example env file:
 
 ```sh
-turbo dev --filter=web
+cp apps/frontend/.env.example apps/frontend/.env
 ```
 
-Without global `turbo`:
+Current startup defaults:
 
-```sh
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+- frontend: `http://localhost:5173`
+- backend: `http://localhost:3000`
+- backend health endpoint: `GET /api/health`
+- frontend API target: `VITE_API_BASE_URL=http://localhost:3000/api`
+- backend allowed frontend origin: `FRONTEND_ORIGIN=http://localhost:5173`
 
-### Remote Caching
+---
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+## 📄 License
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+MIT
