@@ -33,7 +33,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  redis_data:
-  rabbitmq_data:
-  rabbitmq_log:
+  # redis_data:
+  # rabbitmq_data:
+  # rabbitmq_log:
   postgres_data:
