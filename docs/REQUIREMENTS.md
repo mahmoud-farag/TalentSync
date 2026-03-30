@@ -527,62 +527,51 @@ The platform operates on a multi-tenant architecture where each company (Tenant)
 **Data Isolation Strategy:**
 
 1. **Application-Level Isolation**
-   - Every database query includes tenant_id filter
-   - NestJS interceptor automatically injects tenant context
-   - Repository pattern enforces tenant filtering
+   - The platform uses a **Database-per-tenant** (Siloed) architecture.
+   - A central "Control Plane" database stores tenant metadata and database connection strings.
+   - Connection routing logic dynamically establishes connections to the specific tenant's database based on the request context.
 
 2. **Database-Level Isolation**
-   - Row-Level Security (RLS) policies in PostgreSQL
-   - All tenant-scoped tables have tenant_id column
-   - Composite indexes include tenant_id as first column
+   - Total physical separation of data. Each tenant resides in their own distinct PostgreSQL database or schema.
+   - No `tenant_id` columns are needed in tenant-scoped tables.
+   - No complex Row-Level Security (RLS) is required, as cross-tenant queries are physically impossible by default.
 
 3. **API-Level Isolation**
-   - JWT includes tenant_id claim
-   - Request context extracts tenant from JWT
-   - Tenant middleware validates tenant status
+   - JWT includes a `tenant_id` claim.
+   - Request context extracts the tenant from the JWT.
+   - Tenant middleware looks up the tenant's database URL and injects the specific database client instance into the request lifecycle.
 
 **Tenant Context Flow:**
 
 ```
 Request → AuthGuard → Extract JWT → Get tenant_id from JWT
                                     ↓
-                              Verify tenant is active
+                              Lookup DB Connection (Control Plane DB)
                                     ↓
-                              Set TenantContext (AsyncLocalStorage)
+                              Initialize/Retrieve Tenant DB Connection Pool
                                     ↓
-                              Controller/Service executes with tenant context
-                                    ↓
-                              Repository applies tenant_id filter automatically
+                              Controller/Service executes against Tenant DB
 ```
 
 **Implementation Steps:**
 
-1. **Phase 1: Tenant Schema**
-   - Create tenants table with core fields
-   - Create tenant_users junction table
-   - Add tenant_id to all tenant-scoped entities
-   - Create migration for existing data (for future migration)
-   - Add tenant_id indexes on all relevant tables
+1. **Phase 1: Control Plane & Dynamic Routing**
+   - Create central `tenants` table with `database_url` fields.
+   - Implement dynamic database connection pooling logic in NestJS.
+   - Remove `tenant_id` columns from existing tenant-scoped models.
 
 2. **Phase 2: Tenant Context**
-   - Implement AsyncLocalStorage for tenant context
-   - Create TenantContext service for accessing current tenant
-   - Create TenantInterceptor for automatic context setting
-   - Implement tenant validation guard
-   - Add tenant_id to JWT claims
+   - Implement AsyncLocalStorage for tenant DB connections.
+   - Create TenantConnection service for accessing the current tenant's Prisma instance.
+   - Create TenantInterceptor for automatic connection binding.
 
-3. **Phase 3: Row-Level Security**
-   - Enable RLS on all tenant-scoped tables
-   - Create RLS policies using current_tenant_id() function
-   - Create database function to set tenant context per session
-   - Test isolation with multiple tenants
-   - Add RLS policy tests
+3. **Phase 3: Database Provisioning**
+   - Create automated application-level logic to provision new PostgreSQL databases/schemas upon tenant signup.
+   - Run initial schema migrations programmatically when a new tenant registers.
 
-4. **Phase 4: Tenant Middleware**
-   - Implement tenant resolution from subdomain/path
-   - Handle public routes (job board) without tenant context
-   - Add tenant caching in Redis (reduce DB queries)
-   - Implement tenant settings hot-reload
+4. **Phase 4: Optimization**
+   - Implement connection pool lifecycle management (close inactive connections).
+   - Add tenant connection details caching in Redis (reduce Control Plane DB queries).
 
 ---
 
