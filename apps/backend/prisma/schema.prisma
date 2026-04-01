@@ -162,6 +162,11 @@ enum SearchAlertFrequency {
   WEEKLY
 }
 
+enum TokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
 /// Global account record for every human actor in the platform.
 /// This table answers: who can log in, what kind of account they are,
 /// and what the current security/authentication state is.
@@ -202,10 +207,8 @@ model User {
   membershipsInvited     TenantMembership[]       @relation("MembershipInvitedBy")
   /// Jobs this user created as a recruiter.
   createdJobs            Job[]                    @relation("JobsCreatedBy")
-  /// Email verification token history.
-  verificationTokens     VerificationToken[]
-  /// Password reset token history.
-  passwordResetTokens    PasswordResetToken[]
+  /// Active and historical authentication tokens (verification, reset, etc).
+  tokens                 UserToken[]
   /// Active and historical refresh-token based sessions.
   sessions               Session[]
   /// Linked OAuth identities for future social sign-in.
@@ -447,46 +450,27 @@ model Invitation {
   @@map("invitations")
 }
 
-/// Email verification tokens for account activation.
-/// Kept in a dedicated table so they can expire and be audited independently.
-model VerificationToken {
+/// Unified table for all short-lived user authentication tokens.
+model UserToken {
   /// Primary key for token row.
   id        String    @id @default(uuid()) @db.Uuid
-  /// User whose email is being verified.
+  /// User owning the token.
   userId    String    @map("user_id") @db.Uuid
-  /// Unique token included in verification links.
+  /// Purpose of the token (e.g. EMAIL_VERIFICATION, PASSWORD_RESET).
+  type      TokenType
+  /// Unique token included in links.
   token     String    @unique @db.Uuid
   /// Expiration time to limit token reuse.
   expiresAt DateTime  @map("expires_at")
-  /// One-time-use marker after successful verification.
+  /// One-time-use marker after successful redemption.
   usedAt    DateTime? @map("used_at")
   /// Row creation timestamp.
   createdAt DateTime  @default(now()) @map("created_at")
   /// Owning user relation.
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("verification_tokens")
-}
-
-/// Password reset tokens for secure recovery flows.
-/// Separate from sessions because they are short-lived, one-time credentials.
-model PasswordResetToken {
-  /// Primary key for token row.
-  id        String    @id @default(uuid()) @db.Uuid
-  /// User requesting password recovery.
-  userId    String    @map("user_id") @db.Uuid
-  /// Unique token included in reset links.
-  token     String    @unique @db.Uuid
-  /// Expiration time to reduce attack window.
-  expiresAt DateTime  @map("expires_at")
-  /// One-time-use marker once password has been reset.
-  usedAt    DateTime? @map("used_at")
-  /// Row creation timestamp.
-  createdAt DateTime  @default(now()) @map("created_at")
-  /// Owning user relation.
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("password_reset_tokens")
+  @@index([userId, type])
+  @@map("user_tokens")
 }
 
 /// Refresh-token backed authenticated session.
