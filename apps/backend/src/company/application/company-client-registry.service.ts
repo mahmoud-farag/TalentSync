@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, OnModuleDestroy } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
-import { PrismaClient } from '../../../generated/company-client/client.js';
+import { PrismaClient } from '../../../generated/workspace-client/client.js';
 import { GlobalPrismaService } from '../../prisma/global-prisma.service';
 
 @Injectable()
