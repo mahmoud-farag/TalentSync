@@ -1,0 +1,71 @@
+/// Catalog of available subscription plans.
+model SubscriptionPlan {
+  id                   String          @id @default(uuid()) @db.Uuid
+  name                 String          @unique @db.VarChar(50)
+  code                 String          @unique @db.VarChar(50)
+  description          String?
+  priceAmount          Int             @map("price_amount")
+  currency             String          @default("USD") @db.VarChar(3)
+  billingInterval      BillingInterval @map("billing_interval")
+  activeJobsLimit      Int?            @map("active_jobs_limit")
+  teamMembersLimit     Int?            @map("team_members_limit")
+  candidateUnlockLimit Int?            @map("candidate_unlock_limit")
+  cvParsingLimit       Int?            @map("cv_parsing_limit")
+  analyticsTier        String?         @map("analytics_tier") @db.VarChar(50)
+  apiAccess            Boolean         @default(false) @map("api_access")
+  supportTier          String?         @map("support_tier") @db.VarChar(50)
+  createdAt            DateTime        @default(now()) @map("created_at")
+  updatedAt            DateTime        @updatedAt @map("updated_at")
+  subscriptions        Subscription[]
+
+  @@map("subscription_plans")
+}
+
+/// Company's actual subscription state.
+model Subscription {
+  id                   String             @id @default(uuid()) @db.Uuid
+  planId               String             @map("plan_id") @db.Uuid
+  stripeSubscriptionId String?            @unique @map("stripe_subscription_id")
+  stripeCustomerId     String?            @map("stripe_customer_id")
+  status               SubscriptionStatus
+  currentPeriodStart   DateTime?          @map("current_period_start")
+  currentPeriodEnd     DateTime?          @map("current_period_end")
+  cancelAt             DateTime?          @map("cancel_at")
+  canceledAt           DateTime?          @map("canceled_at")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+  plan                 SubscriptionPlan   @relation(fields: [planId], references: [id], onDelete: Restrict)
+
+  @@index([planId, status])
+  @@map("subscriptions")
+}
+
+/// Usage counter for a specific quota feature and billing period.
+model QuotaUsage {
+  id          String       @id @default(uuid()) @db.Uuid
+  feature     QuotaFeature
+  used        Int          @default(0)
+  limit       Int?         @map("limit")
+  periodStart DateTime     @map("period_start")
+  periodEnd   DateTime     @map("period_end")
+  metadata    Json?
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  @@unique([feature, periodStart, periodEnd])
+  @@map("quota_usage")
+}
+
+/// Record that a recruiter unlocked a candidate's contact details.
+model ContactUnlock {
+  id                 String           @id @default(uuid()) @db.Uuid
+  candidateProfileId String           @map("candidate_profile_id") @db.Uuid
+  unlockedById       String           @map("unlocked_by_id") @db.Uuid
+  expiresAt          DateTime?        @map("expires_at")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  candidateProfile   CandidateProfile @relation(fields: [candidateProfileId], references: [id], onDelete: Cascade)
+  unlockedBy         User             @relation(fields: [unlockedById], references: [id], onDelete: Cascade)
+
+  @@unique([candidateProfileId, unlockedById])
+  @@map("contact_unlocks")
+}

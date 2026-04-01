@@ -1,0 +1,153 @@
+enum AccountType {
+  CANDIDATE
+  RECRUITER
+}
+
+enum UserStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum CompanyRole {
+  OWNER
+  ADMIN
+  RECRUITER
+  VIEWER
+}
+
+enum ExperienceLevel {
+  ENTRY
+  MID
+  SENIOR
+  EXECUTIVE
+}
+
+enum RemoteType {
+  ONSITE
+  HYBRID
+  REMOTE
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  PRIVATE
+  ANONYMOUS
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  CANCELLED
+}
+
+enum CvStatus {
+  PENDING
+  PARSING
+  PARSED
+  FAILED
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  FREELANCE
+}
+
+enum JobStatus {
+  DRAFT
+  PUBLISHED
+  PAUSED
+  CLOSED
+  ARCHIVED
+}
+
+enum QuestionType {
+  TEXT
+  TEXTAREA
+  SINGLE_SELECT
+  MULTI_SELECT
+  BOOLEAN
+}
+
+enum ApplicationStatus {
+  DRAFT
+  SUBMITTED
+  SCREENING
+  INTERVIEW
+  OFFERED
+  HIRED
+  REJECTED
+  WITHDRAWN
+}
+
+enum ApplicationSource {
+  DIRECT
+  RECOMMENDATION
+  ALERT
+}
+
+enum MatchTrigger {
+  CV_UPLOAD
+  PROFILE_UPDATE
+  JOB_POSTED
+  JOB_UPDATED
+  MANUAL_REFRESH
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  TRIALING
+}
+
+enum BillingInterval {
+  MONTHLY
+  YEARLY
+  CUSTOM
+}
+
+enum QuotaFeature {
+  ACTIVE_JOBS
+  TEAM_MEMBERS
+  CANDIDATE_UNLOCKS
+  CV_PARSING
+}
+
+enum NotificationType {
+  APPLICATION_RECEIVED
+  APPLICATION_STATUS_CHANGED
+  JOB_MATCH
+  JOB_ALERT
+  PAYMENT_SUCCESS
+  PAYMENT_FAILED
+  TEAM_INVITATION
+  MESSAGE_RECEIVED
+}
+
+enum NotificationChannel {
+  EMAIL
+  IN_APP
+  PUSH
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+}
+
+enum SearchAlertFrequency {
+  DAILY
+  WEEKLY
+}
+
+enum TokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}

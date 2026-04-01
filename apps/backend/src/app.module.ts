@@ -1,6 +1,9 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { dbConfig, serverConfig } from 'config';
+import { CompanyModule } from './company/company.module';
+import { CompanyContextMiddleware } from './company/infrastructure/http/company-context.middleware';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -10,8 +13,14 @@ import { dbConfig, serverConfig } from 'config';
       envFilePath: [`.env.${process.env.NODE_ENV || 'development'}`],
       load: [dbConfig, serverConfig],
     }),
+    PrismaModule,
+    CompanyModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CompanyContextMiddleware).forRoutes('*');
+  }
+}

@@ -1,0 +1,48 @@
+/// Join table between a user account and their role within this company workspace.
+model CompanyMembership {
+  id               String            @id @default(uuid()) @db.Uuid
+  userId           String            @map("user_id") @db.Uuid
+  role             CompanyRole
+  invitedById      String?           @map("invited_by_id") @db.Uuid
+  joinedAt         DateTime?         @map("joined_at")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invitedBy        User?             @relation("MembershipInvitedBy", fields: [invitedById], references: [id], onDelete: SetNull)
+  recruiterProfile RecruiterProfile?
+
+  @@unique([userId])
+  @@index([userId])
+  @@map("company_memberships")
+}
+
+/// Recruiter-specific metadata attached to a company membership.
+model RecruiterProfile {
+  id           String            @id @default(uuid()) @db.Uuid
+  membershipId String            @unique @map("membership_id") @db.Uuid
+  jobTitle     String?           @map("job_title") @db.VarChar(100)
+  department   String?           @db.VarChar(100)
+  linkedinUrl  String?           @map("linkedin_url")
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+  membership   CompanyMembership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+
+  @@map("recruiter_profiles")
+}
+
+/// Invitation sent to an email address before a membership exists.
+model Invitation {
+  id          String           @id @default(uuid()) @db.Uuid
+  email       String           @db.VarChar(320)
+  role        CompanyRole
+  invitedById String           @map("invited_by_id") @db.Uuid
+  token       String           @unique @db.Uuid
+  status      InvitationStatus @default(PENDING)
+  expiresAt   DateTime         @map("expires_at")
+  acceptedAt  DateTime?        @map("accepted_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  invitedBy   User             @relation("InvitationsSent", fields: [invitedById], references: [id], onDelete: Cascade)
+
+  @@index([email, status])
+  @@map("invitations")
+}

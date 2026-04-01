@@ -1,0 +1,34 @@
+model Notification {
+  id        String              @id @default(uuid()) @db.Uuid
+  userId    String              @map("user_id") @db.Uuid
+  type      NotificationType
+  channel   NotificationChannel
+  title     String              @db.VarChar(255)
+  body      String
+  data      Json?
+  status    NotificationStatus  @default(PENDING)
+  readAt    DateTime?           @map("read_at")
+  sentAt    DateTime?           @map("sent_at")
+  createdAt DateTime            @default(now()) @map("created_at")
+  user      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status, createdAt])
+  @@map("notifications")
+}
+
+/// Per-user delivery preferences for notifications.
+model NotificationPreference {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          String   @unique @map("user_id") @db.Uuid
+  emailEnabled    Boolean  @default(true) @map("email_enabled")
+  inAppEnabled    Boolean  @default(true) @map("in_app_enabled")
+  pushEnabled     Boolean  @default(false) @map("push_enabled")
+  quietHoursStart String?  @map("quiet_hours_start") @db.VarChar(5)
+  quietHoursEnd   String?  @map("quiet_hours_end") @db.VarChar(5)
+  preferences     Json?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
+}

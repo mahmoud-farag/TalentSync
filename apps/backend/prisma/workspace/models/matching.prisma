@@ -1,0 +1,39 @@
+model JobCandidateMatch {
+  id                 String           @id @default(uuid()) @db.Uuid
+  jobId              String           @map("job_id") @db.Uuid
+  candidateProfileId String           @map("candidate_profile_id") @db.Uuid
+  score              Decimal          @db.Decimal(5, 2)
+  skillsScore        Decimal?         @map("skills_score") @db.Decimal(5, 2)
+  experienceScore    Decimal?         @map("experience_score") @db.Decimal(5, 2)
+  locationScore      Decimal?         @map("location_score") @db.Decimal(5, 2)
+  preferenceScore    Decimal?         @map("preference_score") @db.Decimal(5, 2)
+  recencyScore       Decimal?         @map("recency_score") @db.Decimal(5, 2)
+  explanation        Json?
+  trigger            MatchTrigger?
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  job                Job              @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  candidateProfile   CandidateProfile @relation(fields: [candidateProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, candidateProfileId])
+  @@index([candidateProfileId, score])
+  @@map("job_candidate_matches")
+}
+
+/// Candidate-facing recommendation row.
+model JobRecommendation {
+  id                 String           @id @default(uuid()) @db.Uuid
+  candidateProfileId String           @map("candidate_profile_id") @db.Uuid
+  jobId              String           @map("job_id") @db.Uuid
+  score              Decimal          @db.Decimal(5, 2)
+  explanation        Json?
+  dismissedAt        DateTime?        @map("dismissed_at")
+  createdAt          DateTime         @default(now()) @map("created_at")
+  updatedAt          DateTime         @updatedAt @map("updated_at")
+  candidateProfile   CandidateProfile @relation(fields: [candidateProfileId], references: [id], onDelete: Cascade)
+  job                Job              @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([candidateProfileId, jobId])
+  @@index([candidateProfileId, score])
+  @@map("job_recommendations")
+}
