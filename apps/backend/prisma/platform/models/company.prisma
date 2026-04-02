@@ -6,10 +6,10 @@ model Company {
   id           String        @id @default(uuid()) @db.Uuid
   /// Human-readable company name.
   name         String        @db.VarChar(100)
-  /// URL-safe unique identifier used for hostname matching (e.g. "localhost1").
-  slug         String        @unique @db.VarChar(120)
-  /// Full connection URL to the company's dedicated database.
-  databaseUrl  String        @map("database_url")
+  /// Hostname used to access the company.
+  hostName     String        @unique @map("host_name")
+  /// Database name for the company.
+  dbName       String        @unique @map("db_name")
   /// Lifecycle state of the company.
   status       CompanyStatus @default(ACTIVE)
   /// S3 bucket name provisioned for this company's file storage.

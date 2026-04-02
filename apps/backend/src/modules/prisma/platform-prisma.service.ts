@@ -4,20 +4,20 @@ import {
   OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
-import { PrismaClient } from '../../generated/platform-client/client.js';
+import { PrismaClient } from '../../../generated/platform-client/client.js';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { ConfigService } from '@nestjs/config';
 
 @Global()
 @Injectable()
-export class GlobalPrismaService
+export class PlatformPrismaService
   extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy
-{
+  implements OnModuleInit, OnModuleDestroy {
   private readonly pool: Pool;
 
-  constructor() {
-    const connectionString = process.env.DATABASE_URL;
+  constructor(private readonly config: ConfigService) {
+    const connectionString = config.get<string>('db.platform.url');
     const pool = new Pool({ connectionString });
     const adapter = new PrismaPg(pool);
     super({ adapter });

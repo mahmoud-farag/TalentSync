@@ -1,6 +1,9 @@
 import { Injectable, NestMiddleware, NotFoundException } from '@nestjs/common';
-import { NextFunction, Response } from 'express';
-import { CompanyRequest } from '../../domain/company-request';
+import { NextFunction, Response, Request } from 'express';
+
+export interface CompanyRequest extends Request {
+  companySlug: string;
+}
 
 @Injectable()
 export class CompanyContextMiddleware implements NestMiddleware {
@@ -13,6 +16,8 @@ export class CompanyContextMiddleware implements NestMiddleware {
      *   acme.talentsync.io -> companySlug = "acme"
      */
     const hostname = req.hostname;
+
+    console.log('---hostname:', hostname);
 
     if (!hostname) {
       throw new NotFoundException('Could not determine company from hostname.');
