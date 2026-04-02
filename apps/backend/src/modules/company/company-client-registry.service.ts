@@ -23,7 +23,7 @@ export class CompanyRegistryService implements OnModuleDestroy {
    * Resolves a connected Prisma client for a company workspace.
    * The control-plane database is the source of truth for company routing.
    */
-  async getClient(hostName: string): Promise<PrismaClient> {
+  async getCompanyDb(hostName: string): Promise<PrismaClient> {
     const cached = this.companyClients.get(hostName);
     if (cached) return cached;
 
