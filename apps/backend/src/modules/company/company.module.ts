@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { CompanyClientRegistryService } from './company-client-registry.service';
+import { CompanyRegistryService } from './company-client-registry.service';
 
 @Module({
-  providers: [CompanyClientRegistryService],
-  exports: [CompanyClientRegistryService],
+  providers: [CompanyRegistryService],
+  exports: [CompanyRegistryService],
 })
 export class CompanyModule {}

@@ -6,7 +6,7 @@ import { PlatformPrismaService } from '../prisma/platform-prisma.service.js';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class CompanyClientRegistryService implements OnModuleDestroy {
+export class CompanyRegistryService implements OnModuleDestroy {
   /**
    * Cache of per-company Prisma clients keyed by company slug.
    * This keeps the company bounded context connection lifecycle centralized.
