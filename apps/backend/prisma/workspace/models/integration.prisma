@@ -1,0 +1,14 @@
+model WebhookEvent {
+  id            String    @id @default(uuid()) @db.Uuid
+  provider      String    @db.VarChar(50)
+  eventId       String    @unique @map("event_id")
+  eventType     String    @map("event_type") @db.VarChar(120)
+  payload       Json
+  processedAt   DateTime? @map("processed_at")
+  failedAt      DateTime? @map("failed_at")
+  failureReason String?   @map("failure_reason")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@index([provider, eventType])
+  @@map("webhook_events")
+}

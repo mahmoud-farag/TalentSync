@@ -1,0 +1,27 @@
+/// Control-plane record for each company/workspace.
+/// The only purpose of this table is company routing and provisioning.
+/// All application data (users, jobs, etc.) lives in the dedicated company database.
+model Company {
+  /// Primary identifier for the company.
+  id           String        @id @default(uuid()) @db.Uuid
+  /// Human-readable company name.
+  name         String        @db.VarChar(100)
+  /// Hostname used to access the company.
+  hostName     String        @unique @map("host_name")
+  /// Database name for the company.
+  dbName       String        @unique @map("db_name")
+  /// Lifecycle state of the company.
+  status       CompanyStatus @default(ACTIVE)
+  /// S3 bucket name provisioned for this company's file storage.
+  s3BucketName String?       @map("s3_bucket_name") @db.VarChar(200)
+  /// S3 bucket region or path prefix for this company.
+  s3BucketKey  String?       @map("s3_bucket_key") @db.VarChar(200)
+  /// Flexible provisioning metadata (e.g. region, plan tier, feature flags).
+  metadata     Json?
+  /// Row creation timestamp.
+  createdAt    DateTime      @default(now()) @map("created_at")
+  /// Row update timestamp.
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  @@map("companies")
+}

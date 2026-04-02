@@ -1,0 +1,134 @@
+/// Core recruiter-side job posting entity.
+model Job {
+  id               String              @id @default(uuid()) @db.Uuid
+  createdById      String              @map("created_by_id") @db.Uuid
+  title            String              @db.VarChar(100)
+  slug             String              @unique @db.VarChar(140)
+  description      String
+  requirements     String
+  city             String?             @db.VarChar(100)
+  country          String?             @db.VarChar(100)
+  remoteType       RemoteType?         @map("remote_type")
+  locationMeta     Json?               @map("location_meta")
+  jobType          JobType             @map("job_type")
+  experienceLevel  ExperienceLevel     @map("experience_level")
+  salaryMin        Int?                @map("salary_min")
+  salaryMax        Int?                @map("salary_max")
+  salaryCurrency   String?             @map("salary_currency") @db.VarChar(3)
+  salaryIsPublic   Boolean             @default(false) @map("salary_is_public")
+  benefits         String[]            @default([])
+  visaSponsorship  Boolean             @default(false) @map("visa_sponsorship")
+  relocation       Boolean             @default(false)
+  status           JobStatus           @default(DRAFT)
+  applicationCount Int                 @default(0) @map("application_count")
+  publishedAt      DateTime?           @map("published_at")
+  expiresAt        DateTime?           @map("expires_at")
+  createdAt        DateTime            @default(now()) @map("created_at")
+  updatedAt        DateTime            @updatedAt @map("updated_at")
+  createdBy        User                @relation("JobsCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  skills           JobSkill[]
+  questions        JobQuestion[]
+  applications     Application[]
+  matches          JobCandidateMatch[]
+  recommendations  JobRecommendation[]
+
+  @@index([status, publishedAt])
+  @@index([country, city])
+  @@map("jobs")
+}
+
+/// Job-to-skill join row.
+model JobSkill {
+  id         String   @id @default(uuid()) @db.Uuid
+  jobId      String   @map("job_id") @db.Uuid
+  skillId    String   @map("skill_id") @db.Uuid
+  isRequired Boolean  @default(true) @map("is_required")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  job        Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  skill      Skill    @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([jobId, skillId])
+  @@map("job_skills")
+}
+
+/// Structured application questions attached to a job posting.
+model JobQuestion {
+  id         String       @id @default(uuid()) @db.Uuid
+  jobId      String       @map("job_id") @db.Uuid
+  question   String
+  type       QuestionType
+  isRequired Boolean      @default(false) @map("is_required")
+  options    Json?
+  sortOrder  Int          @default(0) @map("sort_order")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+  job        Job          @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId, sortOrder])
+  @@map("job_questions")
+}
+
+// ---------------------------------------------------------------
+// APPLICATIONS
+// ---------------------------------------------------------------
+
+/// Candidate application to a specific job using a specific CV.
+model Application {
+  id                 String                   @id @default(uuid()) @db.Uuid
+  candidateProfileId String                   @map("candidate_profile_id") @db.Uuid
+  jobId              String                   @map("job_id") @db.Uuid
+  cvId               String                   @map("cv_id") @db.Uuid
+  coverLetter        String?                  @map("cover_letter")
+  customAnswers      Json?                    @map("custom_answers")
+  status             ApplicationStatus        @default(SUBMITTED)
+  matchScore         Decimal?                 @map("match_score") @db.Decimal(5, 2)
+  source             ApplicationSource        @default(DIRECT)
+  archivedAt         DateTime?                @map("archived_at")
+  withdrawnAt        DateTime?                @map("withdrawn_at")
+  createdAt          DateTime                 @default(now()) @map("created_at")
+  updatedAt          DateTime                 @updatedAt @map("updated_at")
+  candidateProfile   CandidateProfile         @relation(fields: [candidateProfileId], references: [id], onDelete: Cascade)
+  job                Job                      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  cv                 Cv                       @relation(fields: [cvId], references: [id], onDelete: Restrict)
+  statusHistory      ApplicationStatusEvent[]
+  notes              ApplicationNote[]
+
+  @@unique([candidateProfileId, jobId])
+  @@index([jobId, status])
+  @@index([candidateProfileId, status])
+  @@map("applications")
+}
+
+/// Historical record of application stage transitions.
+model ApplicationStatusEvent {
+  id            String             @id @default(uuid()) @db.Uuid
+  applicationId String             @map("application_id") @db.Uuid
+  fromStatus    ApplicationStatus? @map("from_status")
+  toStatus      ApplicationStatus  @map("to_status")
+  changedById   String?            @map("changed_by_id") @db.Uuid
+  note          String?
+  metadata      Json?
+  createdAt     DateTime           @default(now()) @map("created_at")
+  application   Application        @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  changedBy     User?              @relation(fields: [changedById], references: [id], onDelete: SetNull)
+
+  @@index([applicationId, createdAt])
+  @@map("application_status_events")
+}
+
+/// Internal recruiter note attached to an application.
+model ApplicationNote {
+  id            String      @id @default(uuid()) @db.Uuid
+  applicationId String      @map("application_id") @db.Uuid
+  authorId      String      @map("author_id") @db.Uuid
+  body          String
+  isInternal    Boolean     @default(true) @map("is_internal")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  updatedAt     DateTime    @updatedAt @map("updated_at")
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  author        User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId, createdAt])
+  @@map("application_notes")
+}

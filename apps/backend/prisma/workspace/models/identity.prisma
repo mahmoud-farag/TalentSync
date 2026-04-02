@@ -1,0 +1,132 @@
+/// Global account record for every human actor within this company workspace.
+model User {
+  id                     String                   @id @default(uuid()) @db.Uuid
+  email                  String                   @unique @db.VarChar(320)
+  passwordHash           String?                  @map("password_hash")
+  accountType            AccountType              @map("account_type")
+  status                 UserStatus               @default(PENDING_VERIFICATION)
+  emailVerified          Boolean                  @default(false) @map("email_verified")
+  failedLoginAttempts    Int                      @default(0) @map("failed_login_attempts")
+  lastLoginAt            DateTime?                @map("last_login_at")
+  lockedUntil            DateTime?                @map("locked_until")
+  deletedAt              DateTime?                @map("deleted_at")
+  createdAt              DateTime                 @default(now()) @map("created_at")
+  updatedAt              DateTime                 @updatedAt @map("updated_at")
+  profile                UserProfile?
+  candidateProfile       CandidateProfile?
+  memberships            CompanyMembership[]
+  invitationsSent        Invitation[]             @relation("InvitationsSent")
+  membershipsInvited     CompanyMembership[]      @relation("MembershipInvitedBy")
+  createdJobs            Job[]                    @relation("JobsCreatedBy")
+  tokens                 UserToken[]
+  sessions               Session[]
+  oauthAccounts          OAuthAccount[]
+  notifications          Notification[]
+  notificationPreference NotificationPreference?
+  contactUnlocks         ContactUnlock[]
+  applicationNotes       ApplicationNote[]
+  applicationEvents      ApplicationStatusEvent[]
+
+  @@map("users")
+}
+
+/// Shared person-facing profile data kept separate from authentication fields.
+model UserProfile {
+  id                String            @id @default(uuid()) @db.Uuid
+  userId            String            @unique @map("user_id") @db.Uuid
+  firstName         String            @map("first_name") @db.VarChar(50)
+  lastName          String            @map("last_name") @db.VarChar(50)
+  phone             String?           @db.VarChar(32)
+  city              String?           @db.VarChar(100)
+  country           String?           @db.VarChar(100)
+  timezone          String?           @db.VarChar(100)
+  profilePhotoUrl   String?           @map("profile_photo_url")
+  profileCompletion Int               @default(0) @map("profile_completion")
+  visibility        ProfileVisibility @default(PRIVATE)
+  appearsInSearch   Boolean           @default(true) @map("appears_in_search")
+  fieldVisibility   Json?             @map("field_visibility")
+  settings          Json?
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_profiles")
+}
+
+/// Candidate-specific extension of a user account.
+model CandidateProfile {
+  id                        String              @id @default(uuid()) @db.Uuid
+  userId                    String              @unique @map("user_id") @db.Uuid
+  headline                  String?             @db.VarChar(100)
+  summary                   String?
+  experienceLevel           ExperienceLevel?    @map("experience_level")
+  workPreferences           RemoteType[]        @default([]) @map("work_preferences")
+  preferredCountries        String[]            @default([]) @map("preferred_countries")
+  visaStatuses              Json?               @map("visa_statuses")
+  relocation                Boolean             @default(false)
+  salaryExpectationMin      Int?                @map("salary_expectation_min")
+  salaryExpectationMax      Int?                @map("salary_expectation_max")
+  salaryExpectationCurrency String?             @map("salary_expectation_currency") @db.VarChar(3)
+  parsedSummary             Json?               @map("parsed_summary")
+  createdAt                 DateTime            @default(now()) @map("created_at")
+  updatedAt                 DateTime            @updatedAt @map("updated_at")
+  user                      User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skills                    CandidateSkill[]
+  cvs                       Cv[]
+  applications              Application[]
+  matches                   JobCandidateMatch[]
+  savedSearches             SavedSearch[]
+  recommendations           JobRecommendation[]
+  contactUnlocks            ContactUnlock[]
+
+  @@map("candidate_profiles")
+}
+
+/// Unified table for all short-lived user authentication tokens.
+model UserToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  type      TokenType
+  token     String    @unique @db.Uuid
+  expiresAt DateTime  @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+  @@map("user_tokens")
+}
+
+/// Refresh-token backed authenticated session.
+model Session {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @map("user_id") @db.Uuid
+  refreshTokenHash String    @map("refresh_token_hash")
+  familyId         String    @map("family_id") @db.Uuid
+  deviceInfo       Json?     @map("device_info")
+  userAgent        String?   @map("user_agent")
+  ipHash           String?   @map("ip_hash")
+  expiresAt        DateTime  @map("expires_at")
+  revokedAt        DateTime? @map("revoked_at")
+  lastUsedAt       DateTime? @map("last_used_at")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+  @@map("sessions")
+}
+
+/// Linked social identity for future OAuth-based authentication.
+model OAuthAccount {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String   @map("user_id") @db.Uuid
+  provider       String   @db.VarChar(50)
+  providerUserId String   @map("provider_user_id") @db.VarChar(255)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@map("oauth_accounts")
+}
