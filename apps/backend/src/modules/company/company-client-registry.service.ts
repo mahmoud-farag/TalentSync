@@ -66,8 +66,10 @@ export class CompanyRegistryService implements OnModuleDestroy {
       throw new InternalServerErrorException('Company database configuration not found.');
     }
 
-    if (!companyDbConfig.user || !companyDbConfig.password || !companyDbConfig.host || !companyDbConfig.port) {
-      throw new InternalServerErrorException('Company database configuration is incomplete. make sure they exist on the env file');
+    if (!companyDbConfig?.user || !companyDbConfig?.password || !companyDbConfig?.host || !companyDbConfig?.port) {
+      throw new InternalServerErrorException(
+        'Company database configuration is incomplete. make sure they exist on the env file',
+      );
     }
 
     const { user, password, host, port } = companyDbConfig;
@@ -75,18 +77,13 @@ export class CompanyRegistryService implements OnModuleDestroy {
     const url = `postgresql://${user}:${password}@${host}:${port}/${dbName}`;
 
     return url;
-
   }
 
   async onModuleDestroy() {
-    const disconnects = [...this.companyClients.values()].map((client) =>
-      client.$disconnect(),
-    );
+    const disconnects = [...this.companyClients.values()].map((client) => client.$disconnect());
     await Promise.all(disconnects);
 
-    const poolDisconnects = [...this.companyPools.values()].map((pool) =>
-      pool.end(),
-    );
+    const poolDisconnects = [...this.companyPools.values()].map((pool) => pool.end());
     await Promise.all(poolDisconnects);
   }
 }

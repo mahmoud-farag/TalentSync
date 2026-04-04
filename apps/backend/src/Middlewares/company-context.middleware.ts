@@ -13,7 +13,7 @@ import { CompanyRegistryService } from 'src/modules/company/company-client-regis
  *
  * The middleware utilizes dependency injection to share the CompanyRegistryService
  * instance, which caches database connections per company for efficiency.
-*/
+ */
 @Injectable()
 export default class CompanyContextMiddleware implements NestMiddleware {
   constructor(private readonly companyRegistry: CompanyRegistryService) {}

@@ -1,4 +1,4 @@
-import { PrismaClient } from "generated/workspace-client/client";
+import { PrismaClient } from 'generated/workspace-client/client';
 
 /**
  * Express Request extended with company database client.
