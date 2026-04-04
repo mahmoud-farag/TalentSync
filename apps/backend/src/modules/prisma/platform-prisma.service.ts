@@ -1,9 +1,4 @@
-import {
-  Global,
-  Injectable,
-  OnModuleDestroy,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Global, Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '../../../generated/platform-client/client.js';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
@@ -11,9 +6,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Global()
 @Injectable()
-export class PlatformPrismaService
-  extends PrismaClient
-  implements OnModuleInit, OnModuleDestroy {
+export class PlatformPrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   private readonly pool: Pool;
 
   constructor(private readonly config: ConfigService) {

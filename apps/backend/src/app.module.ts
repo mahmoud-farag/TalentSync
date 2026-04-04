@@ -2,8 +2,9 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { dbConfig, serverConfig } from 'src/config';
 import { CompanyModule } from './modules/company/company.module';
-import { CompanyContextMiddleware } from './modules/company/company-context.middleware';
 import { PrismaModule } from './modules/prisma/prisma.module';
+import { CompanyContextMiddleware } from './Middlewares';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -15,10 +16,16 @@ import { PrismaModule } from './modules/prisma/prisma.module';
     }),
     PrismaModule,
     CompanyModule,
+    UserModule,
   ],
   controllers: [],
   providers: [],
 })
+
+/**
+ * Applies the CompanyContextMiddleware to all routes to ensure that the
+ * company-specific database client is attached to each request.
+ */
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(CompanyContextMiddleware).forRoutes('*');
