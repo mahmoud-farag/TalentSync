@@ -1,16 +1,22 @@
 import { createParamDecorator, ExecutionContext, InternalServerErrorException } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { Request } from 'express';
+import type { Request } from 'express';
+import type { PrismaClient } from 'generated/workspace-client/client';
+
+type GraphQlContext = {
+  req?: Request;
+  db?: PrismaClient;
+};
 
 const Db = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
   const gqlCtx = GqlExecutionContext.create(ctx);
-  const request: Request = gqlCtx.getContext<{ req: Request }>()?.req;
-
-  if (!request?.db) {
-    throw new InternalServerErrorException('No database connection found');
+  const context = gqlCtx.getContext<GraphQlContext>();
+  const db = context?.db;
+  if (!db) {
+    throw new InternalServerErrorException('--No database connection found--');
   }
 
-  return request.db;
+  return db;
 });
 
 export default Db;

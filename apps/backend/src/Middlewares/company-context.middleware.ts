@@ -1,4 +1,4 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { CompanyRegistryService } from 'src/modules/company/company-client-registry.service';
 
@@ -16,6 +16,8 @@ import { CompanyRegistryService } from 'src/modules/company/company-client-regis
  */
 @Injectable()
 export default class CompanyContextMiddleware implements NestMiddleware {
+  private readonly logger = new Logger(CompanyContextMiddleware.name);
+
   constructor(private readonly companyRegistry: CompanyRegistryService) {}
 
   /**
@@ -31,10 +33,9 @@ export default class CompanyContextMiddleware implements NestMiddleware {
    */
   async use(req: Request, res: Response, next: NextFunction): Promise<void> {
     const hostname = req.hostname;
-
     const db = await this.companyRegistry.getCompanyDb(hostname);
-
     req.db = db;
+    this.logger.debug(`Attached workspace client to request for host "${hostname}".`);
     next();
   }
 }

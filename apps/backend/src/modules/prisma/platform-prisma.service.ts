@@ -46,7 +46,7 @@ export class PlatformPrismaService extends PrismaClient implements OnModuleInit,
       const shutdownError = error instanceof Error ? error : new Error('Failed to shutdown platform Prisma connection.');
 
       this.logger.error(`Platform Prisma shutdown failed: ${shutdownError.message}`, shutdownError.stack);
-      process.exit(1);
+      process.exit(0);
     }
   }
 }

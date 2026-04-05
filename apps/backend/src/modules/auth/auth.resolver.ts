@@ -1,4 +1,5 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Logger } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { User } from '../user/types';
 import type { PrismaClient } from 'generated/workspace-client/client';
@@ -7,21 +8,21 @@ import { SignInInput, SignUpInput } from './inputs';
 
 @Resolver(() => User)
 export class AuthResolver {
+  private readonly logger = new Logger(AuthResolver.name);
+
   constructor(private readonly authService: AuthService) {}
 
   @Mutation(() => User)
   signIn(@Args('signInInput') signInInput: SignInInput, @Db() db: PrismaClient, @hostName() hostName: string) {
-    console.log(signInInput);
-    console.log(db);
+    this.logger.log(`signIn requested for host "${hostName}".`);
+    void signInInput;
+    void db;
     return {};
   }
 
   @Mutation(() => User)
   signUp(@Args('signUpInput') signUpInput: SignUpInput, @Db() db: PrismaClient, @hostName() hostName: string) {
-    console.log(signUpInput);
-    console.log(db);
-
-    console.log('--hostname from resolver:', hostName);
+    this.logger.log(`signUp requested for host "${hostName}".`);
 
     const result = this.authService.signUp({ signUpInput, db });
     return result;

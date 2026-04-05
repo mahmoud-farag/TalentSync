@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type UserType {
+type User {
   id: ID!
   name: String!
   email: String!
@@ -10,9 +10,21 @@ type UserType {
 }
 
 type Query {
-  login: UserType!
+  getMe: User!
 }
 
 type Mutation {
-  register: UserType!
+  signIn(signInInput: SignInInput!): User!
+  signUp(signUpInput: SignUpInput!): User!
+}
+
+input SignInInput {
+  email: String!
+  password: String!
+}
+
+input SignUpInput {
+  name: String!
+  email: String!
+  password: String!
 }
