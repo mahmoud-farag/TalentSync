@@ -30,8 +30,4 @@ import { dbConfig, serverConfig } from './config';
  * Applies the CompanyContextMiddleware to all routes to ensure that the
  * company-specific database client is attached to each request.
  */
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(CompanyContextMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}
