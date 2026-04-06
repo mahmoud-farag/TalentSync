@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import type { PrismaClient } from 'generated/workspace-client/client';
-import { SignUpInput } from './inputs';
-import { User } from '../user/types';
+import type { CreateUserInput, UserResponse } from '../user/dto';
 
 @Injectable()
 export class AuthService {
@@ -10,17 +9,8 @@ export class AuthService {
 
   constructor(private readonly userService: UserService) {}
 
-  async signUp({ signUpInput, db }: { signUpInput: SignUpInput; db: PrismaClient }) {
-    const userObj: User = {
-      id: '1',
-      email: signUpInput.email,
-      name: signUpInput.name,
-      password: signUpInput.password,
-      // accountType: AccountType.CANDIDATE,
-      // status: UserStatus.ACTIVE,
-    };
-    this.logger.log('Creating user record.');
-    const CreatedUser = await this.userService.createUser({ user: userObj, db });
-    return CreatedUser;
+  async signUp(db: PrismaClient, input: CreateUserInput): Promise<UserResponse> {
+    this.logger.log('signUp started::Creating user record.');
+    return this.userService.createUser(db, input);
   }
 }

@@ -24,7 +24,12 @@ input SignInInput {
 }
 
 input SignUpInput {
-  name: String!
   email: String!
   password: String!
+  accountType: AccountType!
+}
+
+enum AccountType {
+  CANDIDATE
+  RECRUITER
 }

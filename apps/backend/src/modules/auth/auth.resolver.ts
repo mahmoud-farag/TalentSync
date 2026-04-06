@@ -5,6 +5,7 @@ import { User } from '../user/types';
 import type { PrismaClient } from 'generated/workspace-client/client';
 import { Db, hostName } from 'src/decorators';
 import { SignInInput, SignUpInput } from './inputs';
+import type { CreateUserInput } from '../user/dto';
 
 @Resolver(() => User)
 export class AuthResolver {
@@ -21,10 +22,22 @@ export class AuthResolver {
   }
 
   @Mutation(() => User)
-  signUp(@Args('signUpInput') signUpInput: SignUpInput, @Db() db: PrismaClient, @hostName() hostName: string) {
+  async signUp(@Args('signUpInput') signUpInput: SignUpInput, @Db() db: PrismaClient, @hostName() hostName: string) {
     this.logger.log(`signUp requested for host "${hostName}".`);
 
-    const result = this.authService.signUp({ signUpInput, db });
-    return result;
+    // Map GraphQL input to service DTO
+    const createInput: CreateUserInput = {
+      email: signUpInput.email,
+      // name: signUpInput.name,
+      password: signUpInput.password,
+      accountType: signUpInput.accountType,
+    };
+
+    const user = await this.authService.signUp(db, createInput);
+
+    // Map service response to GraphQL type
+    return {
+      ...user,
+    };
   }
 }

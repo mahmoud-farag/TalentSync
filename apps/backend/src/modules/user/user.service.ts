@@ -1,17 +1,42 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaClient } from 'generated/workspace-client/client';
+import type { CreateUserInput, UserResponse } from './dto';
+import { hashPassword } from 'src/common/libs';
 
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
 
-  constructor() {}
-
-  async createUser({ user, db }: { user: unknown; db: PrismaClient }) {
-    // const result = await db.user.create({ data: user });\
+  async createUser(db: PrismaClient, input: CreateUserInput): Promise<UserResponse> {
     this.logger.debug('createUser invoked.');
-    void db;
 
-    return Promise.resolve({ name: 'test', email: 'test', id: 'test' });
+    const passwordHash = await hashPassword(input.password);
+
+    const query = {
+      where: { email: input.email },
+    };
+
+    const existingUser = await db.user.findUnique(query);
+
+    if (existingUser) {
+      this.logger.warn(`Attempt to create user with existing email: ${input.email}`);
+      throw new Error('Email already in use');
+    }
+
+    const createdUser = await db.user.create({
+      data: {
+        email: input.email,
+        passwordHash,
+        accountType: input.accountType, // Add this line
+      },
+      select: {
+        id: true,
+        email: true,
+        accountType: true,
+        // Password excluded from response
+      },
+    });
+
+    return createdUser;
   }
 }
