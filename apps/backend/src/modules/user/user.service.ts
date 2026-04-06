@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaClient } from 'generated/workspace-client/client';
-import type { CreateUserInput, UserResponse } from './dto';
+import type { CreateUserDto, UserResponse } from './dto';
 import { hashPassword } from 'src/common/libs';
 
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
 
-  async createUser(db: PrismaClient, input: CreateUserInput): Promise<UserResponse> {
+  async createUser(db: PrismaClient, input: CreateUserDto): Promise<UserResponse> {
     this.logger.debug('createUser invoked.');
 
     const passwordHash = await hashPassword(input.password);

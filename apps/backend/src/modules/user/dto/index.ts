@@ -1,1 +1,1 @@
-export * from './create-user.input';
+export type { CreateUserDto, UserResponse } from './createUser.dto';
