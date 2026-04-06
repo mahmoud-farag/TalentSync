@@ -50,15 +50,44 @@ For local development, examples are:
 - `localhost1_development`
 - `localhost2_development`
 
-6. Sync the workspace schema into the target company database.
-
-Update `COMPANY_DATABASE_URL` in `.env.development` to the tenant DB you want to sync, then run:
+6. Push the workspace schema into the new tenant database with the dedicated backend script:
 
 ```bash
-pnpm --filter backend prisma:sync:workspace:development
+pnpm --filter backend tenant:schema:push -- \
+  --db localhost1_development \
+  --host localhost \
+  --port 5432 \
+  --user postgres \
+  --password postgres
 ```
 
-7. Add or update the matching row in `platform_development.companies` from pgAdmin.
+The command requires explicit DB connection args and does not store credentials in the script.
+
+To push the schema to all configured local tenant databases at once, run:
+
+```bash
+pnpm --filter backend tenant:schema:push:all -- \
+  --host localhost \
+  --port 5432 \
+  --user postgres \
+  --password postgres \
+  --platform-db platform_development \
+  --platform-host localhost \
+  --platform-port 5432 \
+  --platform-user postgres \
+  --platform-password postgres
+```
+
+The bulk command reads active tenant database names from `platform_development.public.companies` and applies the schema to every tenant row where `status = ACTIVE`.
+
+7. Add or update the matching row in `platform_development.public.companies` from pgAdmin.
+
+Example:
+
+- `name`: `Localhost 1`
+- `host_name`: `localhost1`
+- `db_name`: `localhost1_development`
+- `status`: `ACTIVE`
 
 8. Start the backend:
 
@@ -74,9 +103,64 @@ Tenant database names should follow:
 
 For example, `localhost_development`.
 
+## Manual Tenant Onboarding
+
+Use this flow whenever you add a new tenant manually from pgAdmin.
+
+1. Create a new PostgreSQL database using the pattern `hostname_<env>`.
+
+Example:
+
+- `localhost1_development`
+
+2. Open the new database in pgAdmin and launch the Query Tool.
+
+3. Run the schema push command:
+
+```bash
+pnpm --filter backend tenant:schema:push -- \
+  --db localhost1_development \
+  --host localhost \
+  --port 5432 \
+  --user postgres \
+  --password postgres
+```
+
+4. Verify the new tenant database now has the workspace tables under `public`.
+
+5. Open `platform_development` in pgAdmin and insert a company row into `public.companies`.
+
+Example SQL:
+
+```sql
+INSERT INTO public.companies (
+  id,
+  name,
+  host_name,
+  db_name,
+  status,
+  created_at,
+  updated_at
+)
+VALUES (
+  '11111111-1111-1111-1111-111111111111',
+  'Localhost 1',
+  'localhost1',
+  'localhost1_development',
+  'ACTIVE',
+  NOW(),
+  NOW()
+);
+```
+
+6. Start or restart the backend.
+
+7. Send requests using the tenant hostname so the app resolves the correct workspace database.
+
 ## Useful commands
 
 ```bash
 pnpm --filter backend prisma:migrate:platform:development
-pnpm --filter backend prisma:sync:workspace:development
+pnpm --filter backend tenant:schema:push -- --db localhost1_development --host localhost --port 5432 --user postgres --password postgres
+pnpm --filter backend tenant:schema:push:all -- --host localhost --port 5432 --user postgres --password postgres --platform-db platform_development --platform-host localhost --platform-port 5432 --platform-user postgres --platform-password postgres
 ```
