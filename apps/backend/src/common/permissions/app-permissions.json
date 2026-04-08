@@ -1,0 +1,304 @@
+{
+  "version": 3,
+  "roles": ["OWNER", "ADMIN", "RECRUITER", "VIEWER"],
+  "permissions": [
+    {
+      "code": "dashboard-view",
+      "value": "dashboardView",
+      "description": "View Dashboard"
+    },
+    {
+      "code": "profile-view",
+      "value": "profileView",
+      "description": "View Own Profile"
+    },
+    {
+      "code": "profile-edit",
+      "value": "profileEdit",
+      "description": "Edit Own Profile"
+    },
+    {
+      "code": "member-view",
+      "value": "memberView",
+      "description": "View Members"
+    },
+    {
+      "code": "member-invite",
+      "value": "memberInvite",
+      "description": "Invite Members"
+    },
+    {
+      "code": "member-edit",
+      "value": "memberEdit",
+      "description": "Edit Members"
+    },
+    {
+      "code": "member-remove",
+      "value": "memberRemove",
+      "description": "Remove Members"
+    },
+    {
+      "code": "role-assign",
+      "value": "roleAssign",
+      "description": "Assign Roles"
+    },
+    {
+      "code": "candidate-view",
+      "value": "candidateView",
+      "description": "View Candidates"
+    },
+    {
+      "code": "candidate-edit",
+      "value": "candidateEdit",
+      "description": "Edit Candidates"
+    },
+    {
+      "code": "candidate-contact-unlock",
+      "value": "candidateContactUnlock",
+      "description": "Unlock Candidate Contact"
+    },
+    {
+      "code": "candidate-export",
+      "value": "candidateExport",
+      "description": "Export Candidates"
+    },
+    {
+      "code": "cv-view",
+      "value": "cvView",
+      "description": "View CVs"
+    },
+    {
+      "code": "cv-upload",
+      "value": "cvUpload",
+      "description": "Upload CVs"
+    },
+    {
+      "code": "cv-parse",
+      "value": "cvParse",
+      "description": "Parse CVs"
+    },
+    {
+      "code": "job-view",
+      "value": "jobView",
+      "description": "View Jobs"
+    },
+    {
+      "code": "job-create",
+      "value": "jobCreate",
+      "description": "Create Jobs"
+    },
+    {
+      "code": "job-edit",
+      "value": "jobEdit",
+      "description": "Edit Jobs"
+    },
+    {
+      "code": "job-publish",
+      "value": "jobPublish",
+      "description": "Publish Jobs"
+    },
+    {
+      "code": "job-archive",
+      "value": "jobArchive",
+      "description": "Archive Jobs"
+    },
+    {
+      "code": "application-view",
+      "value": "applicationView",
+      "description": "View Applications"
+    },
+    {
+      "code": "application-manage",
+      "value": "applicationManage",
+      "description": "Manage Applications"
+    },
+    {
+      "code": "application-feedback-manage",
+      "value": "applicationFeedbackManage",
+      "description": "Manage Application Feedback"
+    },
+    {
+      "code": "matching-view",
+      "value": "matchingView",
+      "description": "View Matching"
+    },
+    {
+      "code": "matching-run",
+      "value": "matchingRun",
+      "description": "Run Matching"
+    },
+    {
+      "code": "notification-view",
+      "value": "notificationView",
+      "description": "View Notifications"
+    },
+    {
+      "code": "notification-manage",
+      "value": "notificationManage",
+      "description": "Manage Notifications"
+    },
+    {
+      "code": "billing-view",
+      "value": "billingView",
+      "description": "View Billing"
+    },
+    {
+      "code": "billing-manage",
+      "value": "billingManage",
+      "description": "Manage Billing"
+    },
+    {
+      "code": "settings-view",
+      "value": "settingsView",
+      "description": "View Settings"
+    },
+    {
+      "code": "settings-manage",
+      "value": "settingsManage",
+      "description": "Manage Settings"
+    },
+    {
+      "code": "audit-view",
+      "value": "auditView",
+      "description": "View Audit Logs"
+    }
+  ],
+  "rolePermissions": {
+    "OWNER": {
+      "dashboard-view": true,
+      "profile-view": true,
+      "profile-edit": true,
+      "member-view": true,
+      "member-invite": true,
+      "member-edit": true,
+      "member-remove": true,
+      "role-assign": true,
+      "candidate-view": true,
+      "candidate-edit": true,
+      "candidate-contact-unlock": true,
+      "candidate-export": true,
+      "cv-view": true,
+      "cv-upload": true,
+      "cv-parse": true,
+      "job-view": true,
+      "job-create": true,
+      "job-edit": true,
+      "job-publish": true,
+      "job-archive": true,
+      "application-view": true,
+      "application-manage": true,
+      "application-feedback-manage": true,
+      "matching-view": true,
+      "matching-run": true,
+      "notification-view": true,
+      "notification-manage": true,
+      "billing-view": true,
+      "billing-manage": true,
+      "settings-view": true,
+      "settings-manage": true,
+      "audit-view": true
+    },
+    "ADMIN": {
+      "dashboard-view": true,
+      "profile-view": true,
+      "profile-edit": true,
+      "member-view": true,
+      "member-invite": true,
+      "member-edit": true,
+      "member-remove": false,
+      "role-assign": true,
+      "candidate-view": true,
+      "candidate-edit": true,
+      "candidate-contact-unlock": true,
+      "candidate-export": true,
+      "cv-view": true,
+      "cv-upload": true,
+      "cv-parse": true,
+      "job-view": true,
+      "job-create": true,
+      "job-edit": true,
+      "job-publish": true,
+      "job-archive": true,
+      "application-view": true,
+      "application-manage": true,
+      "application-feedback-manage": true,
+      "matching-view": true,
+      "matching-run": true,
+      "notification-view": true,
+      "notification-manage": true,
+      "billing-view": true,
+      "billing-manage": false,
+      "settings-view": true,
+      "settings-manage": true,
+      "audit-view": true
+    },
+    "RECRUITER": {
+      "dashboard-view": true,
+      "profile-view": true,
+      "profile-edit": true,
+      "member-view": true,
+      "member-invite": false,
+      "member-edit": false,
+      "member-remove": false,
+      "role-assign": false,
+      "candidate-view": true,
+      "candidate-edit": true,
+      "candidate-contact-unlock": true,
+      "candidate-export": false,
+      "cv-view": true,
+      "cv-upload": true,
+      "cv-parse": true,
+      "job-view": true,
+      "job-create": true,
+      "job-edit": true,
+      "job-publish": true,
+      "job-archive": false,
+      "application-view": true,
+      "application-manage": true,
+      "application-feedback-manage": true,
+      "matching-view": true,
+      "matching-run": true,
+      "notification-view": true,
+      "notification-manage": false,
+      "billing-view": false,
+      "billing-manage": false,
+      "settings-view": true,
+      "settings-manage": false,
+      "audit-view": false
+    },
+    "VIEWER": {
+      "dashboard-view": true,
+      "profile-view": true,
+      "profile-edit": true,
+      "member-view": true,
+      "member-invite": false,
+      "member-edit": false,
+      "member-remove": false,
+      "role-assign": false,
+      "candidate-view": true,
+      "candidate-edit": false,
+      "candidate-contact-unlock": false,
+      "candidate-export": false,
+      "cv-view": true,
+      "cv-upload": false,
+      "cv-parse": false,
+      "job-view": true,
+      "job-create": false,
+      "job-edit": false,
+      "job-publish": false,
+      "job-archive": false,
+      "application-view": true,
+      "application-manage": false,
+      "application-feedback-manage": false,
+      "matching-view": true,
+      "matching-run": false,
+      "notification-view": true,
+      "notification-manage": false,
+      "billing-view": false,
+      "billing-manage": false,
+      "settings-view": true,
+      "settings-manage": false,
+      "audit-view": false
+    }
+  }
+}
