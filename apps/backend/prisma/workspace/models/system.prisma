@@ -1,0 +1,25 @@
+/// Single-row workspace configuration record.
+/// This table stores tenant-specific branding, feature toggles,
+/// UI settings, and other workspace-level customizations.
+model WorkspaceSettings {
+  id                String             @id @default(uuid()) @db.Uuid
+  singletonKey      String             @unique @default("default") @map("singleton_key") @db.VarChar(20)
+  workspaceName     String?            @map("workspace_name") @db.VarChar(100)
+  primaryColor      String?            @map("primary_color") @db.VarChar(20)
+  secondaryColor    String?            @map("secondary_color") @db.VarChar(20)
+  logoUrl           String?            @map("logo_url")
+  faviconUrl        String?            @map("favicon_url")
+  themeMode         WorkspaceThemeMode @default(SYSTEM) @map("theme_mode")
+  branding          Json?              @map("branding")
+  featureFlags      Json?              @map("feature_flags")
+  uiConfig          Json?              @map("ui_config")
+  securityConfig    Json?              @map("security_config")
+  localization      Json?              @map("localization")
+  integrations      Json?              @map("integrations")
+  supportConfig     Json?              @map("support_config")
+  metadata          Json?              @map("metadata")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+
+  @@map("workspace_settings")
+}
