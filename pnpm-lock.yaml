@@ -166,8 +166,8 @@ importers:
   apps/frontend:
     dependencies:
       '@apollo/client':
-        specifier: ^4.1.6
-        version: 4.1.6(graphql-ws@6.0.8(graphql@16.13.2)(ws@8.19.0))(graphql@16.13.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(graphql@16.13.2))
+        specifier: ^3.11.10
+        version: 3.14.1(@types/react@19.2.2)(graphql-ws@6.0.8(graphql@16.13.2)(ws@8.19.0))(graphql@16.13.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(subscriptions-transport-ws@0.11.0(graphql@16.13.2))
       '@reduxjs/toolkit':
         specifier: ^2.11.2
         version: 2.11.2(react-redux@9.2.0(@types/react@19.2.2)(react@19.2.0)(redux@5.0.1))(react@19.2.0)
@@ -343,14 +343,13 @@ packages:
     peerDependencies:
       graphql: 14.x || 15.x || 16.x
 
-  '@apollo/client@4.1.6':
-    resolution: {integrity: sha512-ak8uzqmKeX3u9BziGf83RRyODAJKFkPG72hTNvEj4WjMWFmuKW2gGN1i3OfajKT6yuGjvo+n23ES2zqWDKFCZg==}
+  '@apollo/client@3.14.1':
+    resolution: {integrity: sha512-SgGX6E23JsZhUdG2anxiyHvEvvN6CUaI4ZfMsndZFeuHPXL3H0IsaiNAhLITSISbeyeYd+CBd9oERXQDdjXWZw==}
     peerDependencies:
-      graphql: ^16.0.0
+      graphql: ^15.0.0 || ^16.0.0
       graphql-ws: ^5.5.5 || ^6.0.3
-      react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc
-      react-dom: ^17.0.0 || ^18.0.0 || >=19.0.0-rc
-      rxjs: ^7.3.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc
       subscriptions-transport-ws: ^0.9.0 || ^0.11.0
     peerDependenciesMeta:
       graphql-ws:
@@ -3292,6 +3291,9 @@ packages:
   heroicons@2.2.0:
     resolution: {integrity: sha512-yOwvztmNiBWqR946t+JdgZmyzEmnRMC2nxvHFC90bF1SUttwB6yJKYeme1JeEcBfobdOs827nCyiWBS2z/brog==}
 
+  hoist-non-react-statics@3.3.2:
+    resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
+
   hono@4.12.9:
     resolution: {integrity: sha512-wy3T8Zm2bsEvxKZM5w21VdHDDcwVS1yUFFY6i8UobSsKfFceT7TOwhbhfKsDyx7tYQlmRM5FLpIuYvNFyjctiA==}
     engines: {node: '>=16.9.0'}
@@ -4438,6 +4440,17 @@ packages:
     resolution: {integrity: sha512-dYqgNSZbDwkaJ2ceRd9ojCGjBq+mOm9LmtXnAnEGyHhN/5R7iDW2TRw3h+o/jCFxus3P2LfWIIiwowAjANm7IA==}
     engines: {node: '>= 0.4'}
 
+  rehackt@0.1.0:
+    resolution: {integrity: sha512-7kRDOuLHB87D/JESKxQoRwv4DzbIdwkAGQ7p6QKGdVlY1IZheUnVhlk/4UZlNUVxdAXpyxikE3URsG067ybVzw==}
+    peerDependencies:
+      '@types/react': '*'
+      react: '*'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
+
   remeda@2.33.4:
     resolution: {integrity: sha512-ygHswjlc/opg2VrtiYvUOPLjxjtdKvjGz1/plDhkG66hjNjFr1xmfrs2ClNFo/E6TyUFiwYNh53bKV26oBoMGQ==}
 
@@ -4826,6 +4839,10 @@ packages:
     peerDependencies:
       typescript: '>=4.8.4'
 
+  ts-invariant@0.10.3:
+    resolution: {integrity: sha512-uivwYcQaxAucv1CzRp2n/QdYPo4ILf9VXgH19zEIjFx2EJufV16P0JtJVpYHy89DItG6Kwj2oIUjrcK5au+4tQ==}
+    engines: {node: '>=8'}
+
   ts-jest@29.4.6:
     resolution: {integrity: sha512-fSpWtOO/1AjSNQguk43hb/JCo16oJDnMJf3CdEGNkqsEX3t0KX96xvyX1D7PfLCpVoKu4MfVrqUkFyblYoY4lA==}
     engines: {node: ^14.15.0 || ^16.10.0 || ^18.0.0 || >=20.0.0}
@@ -5202,6 +5219,12 @@ packages:
     resolution: {integrity: sha512-U/PBtDf35ff0D8X8D0jfdzHYEPFxAI7jJlxZXwCSez5M3190m+QobIfh+sWDWSHMCWWJN2AWamkegn6vr6YBTw==}
     engines: {node: '>=18'}
 
+  zen-observable-ts@1.2.5:
+    resolution: {integrity: sha512-QZWQekv6iB72Naeake9hS1KxHlotfRpe+WGNbNx5/ta+R3DNjVO2bswf63gXlWDcs+EMd7XY8HfVQyP1X6T4Zg==}
+
+  zen-observable@0.8.15:
+    resolution: {integrity: sha512-PQ2PC7R9rslx84ndNBZB/Dkv8V8fZEpk83RLgXtYd0fwUgEjseMn1Dgajh2x6S8QbZAFa9p2qVCEuYZNgve0dQ==}
+
   zeptomatch@2.1.0:
     resolution: {integrity: sha512-KiGErG2J0G82LSpniV0CtIzjlJ10E04j02VOudJsPyPwNZgGnRKQy7I1R7GMyg/QswnE4l7ohSGrQbQbjXPPDA==}
 
@@ -5268,7 +5291,7 @@ snapshots:
     dependencies:
       graphql: 16.13.2
 
-  '@apollo/client@4.1.6(graphql-ws@6.0.8(graphql@16.13.2)(ws@8.19.0))(graphql@16.13.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rxjs@7.8.2)(subscriptions-transport-ws@0.11.0(graphql@16.13.2))':
+  '@apollo/client@3.14.1(@types/react@19.2.2)(graphql-ws@6.0.8(graphql@16.13.2)(ws@8.19.0))(graphql@16.13.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(subscriptions-transport-ws@0.11.0(graphql@16.13.2))':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.13.2)
       '@wry/caches': 1.0.1
@@ -5276,14 +5299,21 @@ snapshots:
       '@wry/trie': 0.5.0
       graphql: 16.13.2
       graphql-tag: 2.12.6(graphql@16.13.2)
+      hoist-non-react-statics: 3.3.2
       optimism: 0.18.1
-      rxjs: 7.8.2
+      prop-types: 15.8.1
+      rehackt: 0.1.0(@types/react@19.2.2)(react@19.2.0)
+      symbol-observable: 4.0.0
+      ts-invariant: 0.10.3
       tslib: 2.8.1
+      zen-observable-ts: 1.2.5
     optionalDependencies:
       graphql-ws: 6.0.8(graphql@16.13.2)(ws@8.19.0)
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
       subscriptions-transport-ws: 0.11.0(graphql@16.13.2)
+    transitivePeerDependencies:
+      - '@types/react'
 
   '@apollo/protobufjs@1.2.7':
     dependencies:
@@ -8457,6 +8487,10 @@ snapshots:
 
   heroicons@2.2.0: {}
 
+  hoist-non-react-statics@3.3.2:
+    dependencies:
+      react-is: 16.13.1
+
   hono@4.12.9: {}
 
   html-escaper@2.0.2: {}
@@ -9714,6 +9748,11 @@ snapshots:
       gopd: 1.2.0
       set-function-name: 2.0.2
 
+  rehackt@0.1.0(@types/react@19.2.2)(react@19.2.0):
+    optionalDependencies:
+      '@types/react': 19.2.2
+      react: 19.2.0
+
   remeda@2.33.4: {}
 
   require-directory@2.1.1: {}
@@ -10175,6 +10214,10 @@ snapshots:
     dependencies:
       typescript: 5.9.2
 
+  ts-invariant@0.10.3:
+    dependencies:
+      tslib: 2.8.1
+
   ts-jest@29.4.6(@babel/core@7.29.0)(@jest/transform@30.3.0)(@jest/types@30.3.0)(babel-jest@30.3.0(@babel/core@7.29.0))(jest-util@30.3.0)(jest@30.3.0(@types/node@22.15.3)(ts-node@10.9.2(@types/node@22.15.3)(typescript@5.9.2)))(typescript@5.9.2):
     dependencies:
       bs-logger: 0.2.6
@@ -10570,6 +10613,12 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yoctocolors-cjs@2.1.3: {}
+
+  zen-observable-ts@1.2.5:
+    dependencies:
+      zen-observable: 0.8.15
+
+  zen-observable@0.8.15: {}
 
   zeptomatch@2.1.0:
     dependencies:
