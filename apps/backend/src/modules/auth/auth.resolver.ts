@@ -1,12 +1,13 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { Logger } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { User } from '../user/types';
 import type { PrismaClient } from 'generated/workspace-client/client';
 import { Db, hostName } from 'src/decorators';
 import { SignInInput, SignUpInput } from './gqlInputs';
-import type { CreateUserDto } from '../user/dto';
+import type { CreateUserDto, UserResponse } from '../user/dto';
 import { SignInDto } from './dtos/signIn.dto';
+import { AuthPayload } from './types/gqlTypes/authPayload';
+import { User } from '../user/types/gqlTypes';
 
 @Resolver(() => User)
 export class AuthResolver {
@@ -14,24 +15,28 @@ export class AuthResolver {
 
   constructor(private readonly authService: AuthService) {}
 
-  @Mutation(() => User)
-  async signIn(@Args('signInInput') signInInput: SignInInput, @Db() db: PrismaClient, @hostName() hostName: string) {
+  @Mutation(() => AuthPayload)
+  async login(@Args('loginInput') loginInput: SignInInput, @Db() db: PrismaClient, @hostName() hostName: string): Promise<AuthPayload> {
     this.logger.log(`signIn requested for host "${hostName}".`);
 
     const loginPayload: SignInDto = {
-      email: signInInput.email,
-      password: signInInput.password,
+      email: loginInput.email,
+      password: loginInput.password,
     };
 
-    const response = await this.authService.signIn({ db, loginPayload });
-    return response;
+    const user = await this.authService.signIn({ db, loginPayload });
+    return {
+      accessToken: '',
+      refreshToken: '',
+      user,
+    };
   }
 
-  @Mutation(() => User)
-  async signUp(@Args('signUpInput') signUpInput: SignUpInput, @Db() db: PrismaClient, @hostName() hostName: string) {
+  @Mutation(() => AuthPayload)
+  async signUp(@Args('signUpInput') signUpInput: SignUpInput, @Db() db: PrismaClient, @hostName() hostName: string): Promise<AuthPayload> {
     this.logger.log(`signUp requested for host "${hostName}".`);
 
-    // Map GraphQL input to service DTO
+    // Map GraphQL input too service DTO
     const createInput: CreateUserDto = {
       email: signUpInput.email,
       // name: signUpInput.name,
@@ -43,7 +48,9 @@ export class AuthResolver {
 
     // Map service response to GraphQL type
     return {
-      ...user,
+      accessToken: '',
+      refreshToken: '',
+      user,
     };
   }
 }

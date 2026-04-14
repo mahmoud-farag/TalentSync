@@ -151,3 +151,9 @@ enum TokenType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
 }
+
+enum WorkspaceThemeMode {
+  LIGHT
+  DARK
+  SYSTEM
+}

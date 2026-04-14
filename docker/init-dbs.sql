@@ -46,6 +46,7 @@ CREATE INDEX IF NOT EXISTS "companies_host_name_idx" ON "companies"("host_name")
 -- Seed tenant records
 INSERT INTO "companies" ("id", "name", "host_name", "db_name", "status")
 VALUES
+    (gen_random_uuid(), 'localhost client', 'localhost', 'localhost_development', 'ACTIVE'),
     (gen_random_uuid(), 'localhost1 client', 'localhost1', 'localhost1_development', 'ACTIVE'),
     (gen_random_uuid(), 'localhost2 client', 'localhost2', 'localhost2_development', 'ACTIVE')
 ON CONFLICT ("host_name") DO NOTHING;

@@ -1,0 +1,6 @@
+export const UserRole = {
+  ADMIN: 'ADMIN',
+  RECRUITER: 'RECRUITER',
+  HIRING_MANAGER: 'HIRING_MANAGER',
+  CANDIDATE: 'CANDIDATE',
+} as const;

@@ -8,14 +8,17 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
 
   try {
+
+    const isDevelopment = process.env.NODE_ENV === 'development';
     const app = await NestFactory.create(AppModule, {
-      bufferLogs: true,
+      bufferLogs: isDevelopment?  false : true,
     });
 
-    app.useLogger(process.env.NODE_ENV === 'production' ? ['log', 'warn', 'error'] : ['log', 'warn', 'error', 'debug', 'verbose']);
+    app.useLogger(isDevelopment ? ['log', 'warn', 'error'] : ['log', 'warn', 'error', 'debug', 'verbose']);
 
-    const frontendOrigin = process.env.FRONTEND_ORIGIN ?? 'http://localhost:5173';
-    // app.setGlobalPrefix('api');
+
+    const frontendOrigin = isDevelopment ? ['http://localhost:5173', 'http://localhost1:5173', 'http://localhost2:5173'] :  [process.env.FRONTEND_ORIGIN] ;
+    app.setGlobalPrefix('api');
     app.enableCors({
       origin: frontendOrigin,
       credentials: true,

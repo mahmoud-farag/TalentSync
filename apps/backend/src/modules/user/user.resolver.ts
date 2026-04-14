@@ -1,8 +1,8 @@
 import { PrismaClient } from 'generated/workspace-client/client';
-import { User } from './types';
 import { Db } from 'src/decorators';
 import { UserService } from './user.service';
 import { Query, Resolver } from '@nestjs/graphql';
+import { User } from './types/gqlTypes';
 
 @Resolver(() => User)
 export default class UserResolver {

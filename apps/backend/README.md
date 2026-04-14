@@ -162,5 +162,5 @@ VALUES (
 ```bash
 pnpm --filter backend prisma:migrate:platform:development
 pnpm --filter backend tenant:schema:push -- --db localhost1_development --host localhost --port 5432 --user postgres --password postgres
-pnpm --filter backend tenant:schema:push:all -- --host localhost --port 5432 --user postgres --password postgres --platform-db platform_development --platform-host localhost --platform-port 5432 --platform-user postgres --platform-password postgres
+pnpm --filter backend tenant:schema:push:all --all --host localhost --port 5432 --user postgres --password postgres --platform-db platform_development --platform-host localhost --platform-port 5432 --platform-user postgres --platform-password postgres
 ```

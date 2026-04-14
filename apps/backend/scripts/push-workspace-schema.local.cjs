@@ -127,6 +127,13 @@ function pushWorkspaceSchema(target, dbName) {
 async function run() {
   const args = parseCliArgs(process.argv.slice(2));
   const runAll = args.all === 'true';
+
+  if (runAll) {
+    console.log('Running workspace schema push for all active tenant databases in platform.companies...');
+  } else {
+    console.log('Running workspace schema push for a single database...');
+  }
+
   const workspaceTarget = {
     db: args.db,
     host: args.host,
@@ -135,14 +142,18 @@ async function run() {
     password: args.password,
     schema: args.schema || 'public',
   };
+
   const platformTarget = {
-    db: args.platformDb,
-    host: args.platformHost,
-    port: args.platformPort,
-    user: args.platformUser,
-    password: args.platformPassword,
-    schema: args.platformSchema || 'public',
+    db: args?.['platform-db'],
+    host: args?.['platform-host'],
+    port: args?.['platform-port'],
+    user: args?.['platform-user'],
+    password: args?.['platform-password'],
+    schema: args?.['platform-schema'] || 'public',
   };
+
+  // console.log('--platformTarget:', platformTarget);
+  // console.log('--workspaceTarget:', workspaceTarget);
 
   const dbTargets = runAll
     ? await getActiveTenantDbs(platformTarget)
