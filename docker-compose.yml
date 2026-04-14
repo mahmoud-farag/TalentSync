@@ -32,6 +32,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/init-dbs.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - talentsync-network
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -47,6 +49,12 @@ services:
       - pgadmin_data:/var/lib/pgadmin
     depends_on:
       - postgres
+    networks:
+      - talentsync-network
+
+networks:
+  talentsync-network:
+    driver: bridge
 
 volumes:
   # redis_data:
