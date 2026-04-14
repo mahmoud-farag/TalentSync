@@ -12,6 +12,19 @@ interface AppProvidersProps {
  * Order matters: Redux -> Apollo -> Bootstrap
  */
 export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
+  //* States
+
+  //* Custom hooks
+
+  //* Refs
+
+  //* Helper functions
+
+  //* Life cycle hooks
+
+  //* Handlers
+
+  //* JSX
   return (
     <ReduxProvider>
       <ApolloProvider>

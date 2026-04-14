@@ -1,8 +1,19 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { User, AuthState } from '../../core/auth/types';
-import { apolloClient, resetApolloStore } from '../../core/api';
-import { clearAuthStorage, clearTokens, getStoredUser, hasValidTokens, setStoredUser, setTokens } from '../../core/auth/token';
-import { LOGIN_MUTATION, LOGOUT_MUTATION, SIGNUP_MUTATION } from '../../features/auth/api';
+import  { ApolloError } from '@apollo/client';
+
+
+import type { User, AuthState } from '../../../core/auth/types';
+import { apolloClient, resetApolloStore } from '../../../core/api';
+import {
+  clearAuthStorage,
+  clearTokens,
+  getStoredUser,
+  hasValidTokens,
+  setStoredUser,
+  setTokens,
+} from '../../../core/auth/token';
+import { LOGIN_MUTATION, LOGOUT_MUTATION, SIGNUP_MUTATION } from '../api';
+import type { SignupFormData } from '../types';
 
 interface AuthPayload {
   accessToken: string;
@@ -12,8 +23,21 @@ interface AuthPayload {
 
 interface AuthMutationResponse {
   login?: AuthPayload;
-  signup?: AuthPayload;
+  signUp?: AuthPayload;
 }
+
+export interface AuthSliceState extends AuthState {
+  signupDraft: SignupFormData;
+}
+
+const emptySignupDraft: SignupFormData = {
+  email: '',
+  password: '',
+  confirmPassword: '',
+  firstName: '',
+  lastName: '',
+  accountType: 'CANDIDATE'
+};
 
 export const initializeAuth = createAsyncThunk<User | null>('auth/initializeAuth', async () => {
   if (!hasValidTokens()) {
@@ -29,48 +53,74 @@ export const loginThunk = createAsyncThunk<User, { email: string; password: stri
   'auth/login',
   async (credentials, { rejectWithValue }) => {
     try {
-      const { data } = await apolloClient.mutate<AuthMutationResponse>({
+      const { data, errors } = await apolloClient.mutate<AuthMutationResponse>({
         mutation: LOGIN_MUTATION,
         variables: { input: credentials },
-      });
+      }); 
+
+      if (errors?.length) {
+        return rejectWithValue(errors[0]?.message ?? 'Login failed');
+      }
 
       if (!data?.login) {
         return rejectWithValue('Login failed');
       }
+  
 
       const { accessToken, refreshToken, user } = data.login;
       setTokens(accessToken, refreshToken);
       setStoredUser(user);
       return user;
     } catch (error) {
+
+      if (error instanceof ApolloError && error.graphQLErrors.length > 0) {
+        return rejectWithValue(error.graphQLErrors[0]?.message ?? 'Login failed');
+      }
+
       return rejectWithValue(error instanceof Error ? error.message : 'Login failed');
     }
   }
 );
-
+ 
 export const signupThunk = createAsyncThunk<
   User,
   { email: string; password: string; firstName: string; lastName: string },
   { rejectValue: string }
 >('auth/signup', async (payload, { rejectWithValue }) => {
   try {
-    const { data } = await apolloClient.mutate<AuthMutationResponse>({
+    const normalizedPayload = normalizeSignupInputs(payload as SignupFormData);
+
+    const { data, errors } = await apolloClient.mutate<AuthMutationResponse>({
       mutation: SIGNUP_MUTATION,
-      variables: { input: payload },
+      variables: { input: normalizedPayload },
     });
 
-    if (!data?.signup) {
+    if (errors?.length) {
+      return rejectWithValue(errors[0]?.message ?? 'Signup failed');
+    }
+
+    if (!data?.signUp) {
       return rejectWithValue('Signup failed');
     }
 
-    const { accessToken, refreshToken, user } = data.signup;
+    const { accessToken, refreshToken, user } = data.signUp;
     setTokens(accessToken, refreshToken);
     setStoredUser(user);
     return user;
   } catch (error) {
+    if (error instanceof ApolloError && error.graphQLErrors.length > 0) {
+      return rejectWithValue(error.graphQLErrors[0]?.message ?? 'Signup failed');
+    }
+
     return rejectWithValue(error instanceof Error ? error.message : 'Signup failed');
   }
 });
+
+function normalizeSignupInputs(payload: SignupFormData) {
+  const { confirmPassword, ...rest } = payload;
+
+  return  rest;
+}
 
 export const logoutThunk = createAsyncThunk<void>('auth/logout', async () => {
   try {
@@ -84,11 +134,13 @@ export const logoutThunk = createAsyncThunk<void>('auth/logout', async () => {
   }
 });
 
-const initialState: AuthState = {
+const initialState: AuthSliceState = {
   user: null,
   isAuthenticated: false,
+  isInitializing: true,
   isLoading: true,
   error: null,
+  signupDraft: emptySignupDraft,
 };
 
 const authSlice = createSlice({
@@ -101,34 +153,46 @@ const authSlice = createSlice({
     setUser: (state, action: PayloadAction<User | null>) => {
       state.user = action.payload;
       state.isAuthenticated = !!action.payload;
+      state.isInitializing = false;
       state.isLoading = false;
       state.error = null;
     },
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
+      state.isInitializing = false;
       state.isLoading = false;
     },
     clearAuth: (state) => {
       state.user = null;
       state.isAuthenticated = false;
+      state.isInitializing = false;
       state.isLoading = false;
       state.error = null;
+    },
+    setSignupDraft: (state, action: PayloadAction<Partial<SignupFormData>>) => {
+      state.signupDraft = { ...state.signupDraft, ...action.payload };
+    },
+    resetSignupDraft: (state) => {
+      state.signupDraft = emptySignupDraft;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(initializeAuth.pending, (state) => {
+        state.isInitializing = true;
         state.isLoading = true;
       })
       .addCase(initializeAuth.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuthenticated = !!action.payload;
+        state.isInitializing = false;
         state.isLoading = false;
         state.error = null;
       })
       .addCase(initializeAuth.rejected, (state, action) => {
         state.user = null;
         state.isAuthenticated = false;
+        state.isInitializing = false;
         state.isLoading = false;
         state.error = action.error.message ?? null;
       })
@@ -146,7 +210,7 @@ const authSlice = createSlice({
         state.user = null;
         state.isAuthenticated = false;
         state.isLoading = false;
-        state.error = action.payload ?? 'Login failed';
+        state.error = action.payload ?? 'Login failed3';
       })
       .addCase(signupThunk.pending, (state) => {
         state.isLoading = true;
@@ -157,6 +221,7 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.isLoading = false;
         state.error = null;
+        state.signupDraft = emptySignupDraft;
       })
       .addCase(signupThunk.rejected, (state, action) => {
         state.user = null;
@@ -182,5 +247,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setLoading, setUser, setError, clearAuth } = authSlice.actions;
+export const { setLoading, setUser, setError, clearAuth, setSignupDraft, resetSignupDraft } = authSlice.actions;
 export default authSlice.reducer;

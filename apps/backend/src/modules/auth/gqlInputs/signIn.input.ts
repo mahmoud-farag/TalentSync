@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsEmail, IsNotEmpty } from 'class-validator';
 
 @InputType()
-export default class SignInInput {
+export default class LoginInput {
   @Field()
   @IsNotEmpty({ message: 'Password is required' })
   @IsEmail({}, { message: 'Invalid email format' })

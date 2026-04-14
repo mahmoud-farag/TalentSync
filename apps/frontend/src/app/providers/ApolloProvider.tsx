@@ -7,6 +7,19 @@ interface ApolloProviderProps {
 }
 
 export const ApolloProvider: React.FC<ApolloProviderProps> = ({ children }) => {
+  //* States
+
+  //* Custom hooks
+
+  //* Refs
+
+  //* Helper functions
+
+  //* Life cycle hooks
+
+  //* Handlers
+
+  //* JSX
   return (
     <BaseApolloProvider client={apolloClient}>{children}</BaseApolloProvider>
   );

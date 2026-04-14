@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { LoadingScreen } from '../../shared/components';
 import { useAppDispatch } from '../store';
-import { initializeAuth } from '../store/authSlice';
+import { initializeAuth } from '../../features/auth/store';
 
 interface BootstrapProviderProps {
   children: React.ReactNode;
@@ -12,9 +12,17 @@ interface BootstrapProviderProps {
  * Shows loading screen while checking authentication status
  */ 
 export const BootstrapProvider: React.FC<BootstrapProviderProps> = ({ children }) => {
+  //* States
   const [isBootstrapped, setIsBootstrapped] = useState<boolean>(false);
+
+  //* Custom hooks
   const dispatch = useAppDispatch();
 
+  //* Refs
+
+  //* Helper functions
+
+  //* Life cycle hooks
   useEffect(() => {
     const bootstrap = async (): Promise<void> => {
      try{
@@ -30,6 +38,9 @@ export const BootstrapProvider: React.FC<BootstrapProviderProps> = ({ children }
     bootstrap();
   }, [dispatch]);
 
+  //* Handlers
+
+  //* JSX
   if (!isBootstrapped) {
     return <LoadingScreen message="Initializing..." />;
   }

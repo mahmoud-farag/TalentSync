@@ -4,9 +4,24 @@
 
 type User {
   id: ID!
-  name: String!
+  name: String
   email: String!
-  password: String!
+  password: String
+  firstName: String
+  lastName: String
+  accountType: AccountType!
+}
+
+enum AccountType {
+  CANDIDATE
+  RECRUITER
+}
+
+type AuthPayload {
+  accessToken: String!
+  refreshToken: String!
+  expiresIn: String
+  user: User
 }
 
 type Query {
@@ -14,22 +29,19 @@ type Query {
 }
 
 type Mutation {
-  signIn(signInInput: SignInInput!): User!
-  signUp(signUpInput: SignUpInput!): User!
+  login(loginInput: LoginInput!): AuthPayload!
+  signUp(signUpInput: SignUpInput!): AuthPayload!
 }
 
-input SignInInput {
+input LoginInput {
   email: String!
   password: String!
 }
 
 input SignUpInput {
+  firstName: String!
+  lastName: String!
   email: String!
   password: String!
   accountType: AccountType!
-}
-
-enum AccountType {
-  CANDIDATE
-  RECRUITER
 }

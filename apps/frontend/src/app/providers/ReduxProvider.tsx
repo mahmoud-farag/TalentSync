@@ -7,6 +7,19 @@ interface ReduxProviderProps {
 }
 
 export const ReduxProvider: React.FC<ReduxProviderProps> = ({ children }) => {
+  //* States
+
+  //* Custom hooks
+
+  //* Refs
+
+  //* Helper functions
+
+  //* Life cycle hooks
+
+  //* Handlers
+
+  //* JSX
   return (
     <Provider store={store}>
       {children}
